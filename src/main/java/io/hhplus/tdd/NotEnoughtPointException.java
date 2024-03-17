@@ -1,2 +1,4 @@
-package io.hhplus.tdd;public class NotEnoughtPointException {
+package io.hhplus.tdd;
+
+public class NotEnoughtPointException extends RuntimeException {
 }

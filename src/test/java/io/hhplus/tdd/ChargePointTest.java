@@ -1,32 +1,26 @@
 package io.hhplus.tdd;
 
-import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
-import io.hhplus.tdd.point.PointHistory;
 import io.hhplus.tdd.point.UserPoint;
-import org.apache.catalina.User;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class Assignment1 {
-//    private PointHistoryTable pointHistoryTable = new PointHistoryTable();
-//    private UserPointTable userPointTable = new UserPointTable();
+public class ChargePointTest {
     private PointService pointService;
     private UserPointTable userPointTable = new UserPointTable();
     private UserPointTable mockUserPointTable = Mockito.mock(UserPointTable.class);
+    private PointHistoryService pointHistoryService = Mockito.mock(PointHistoryService.class);
 
     @BeforeEach
     void setUp2(){
-        pointService = new PointService(userPointTable);
+        pointService = new PointService(userPointTable, pointHistoryService);
     }
 
 
