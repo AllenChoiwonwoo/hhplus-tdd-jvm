@@ -24,25 +24,32 @@ public class PointService {
         this.pointHistoryService = pointHistoryService;
     }
 
-    public UserPoint chargePoint(long id, long point){
-        UserPoint userPoint = userPointTable.selectById(id);
-         if (point == 0L)
-             return userPoint;
-        long pointCharged = userPoint.getPoint() + point;
-        UserPoint userPointCharged = userPointTable.insertOrUpdate(id, pointCharged);
-        pointHistoryService.addHistory(TransactionType.CHARGE, userPointCharged);
-        return userPointCharged;
-    }
+
 
     public UserPoint lookUpOneUserPointById(long id) {
         return userPointTable.selectById(id);
     }
+    public UserPoint chargePoint(long id, long point){
+        return changePoint(id, point);
+
+    }
 
     public UserPoint usePoint(long id, Long point) {
+        return changePoint(id, point * -1L);
+    }
+
+    private synchronized UserPoint changePoint(Long id, Long point){
         UserPoint userPoint = lookUpOneUserPointById(id);
-        if (userPoint.getPoint() < point) throw new NotEnoughtPointException();
-        UserPoint userPointUsed = userPointTable.insertOrUpdate(id, userPoint.getPoint() - point);
-        pointHistoryService.addHistory(TransactionType.USE, userPointUsed);
-        return userPointUsed;
+        if (point == 0L){
+            return userPoint;
+        }
+        long calculatedPoint = userPoint.getPoint() + point;
+        if (calculatedPoint < 0){
+            throw new NotEnoughtPointException();
+        }
+        UserPoint userPointChanged = userPointTable.insertOrUpdate(id, calculatedPoint);
+        TransactionType type = point > 0L ? TransactionType.CHARGE : TransactionType.USE;
+        pointHistoryService.addHistory(type, userPointChanged);
+        return userPointChanged;
     }
 }
