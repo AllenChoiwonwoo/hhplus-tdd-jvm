@@ -28,14 +28,13 @@ public class LookUpPointChangeListTest {
     void setUp() {
         pointHistoryService = new PointHistoryService(pointHistoryTable);
         pointService = new PointService(userPointTable, pointHistoryService);
-//        pointService.chargePoint(1L, 10L);
     }
 
     @Test
     @DisplayName("포인트 히스토리 넣기")
     void test1() {
-        UserPoint userPoint = pointService.chargePoint(1L, 10L);
-//        Long result = pointHistoryService.addHistory(TransactionType.CHARGE, userPoint);
+        pointService.chargePoint(1L, 10L);
+
         PointHistory pointHistory = pointHistoryService.getPointUsageHistory(1L).stream().max(Comparator.comparingLong(PointHistory::getId)).orElseThrow();
         assertEquals(1L, pointHistory.getId());
     }
@@ -46,10 +45,14 @@ public class LookUpPointChangeListTest {
         pointService.chargePoint(1L, 10L);
         pointService.usePoint(1L, 5L);
         pointService.chargePoint(1L, 10L);
-        UserPoint resultPoint = pointService.usePoint(1L, 5L);
-        assertEquals(10L, resultPoint.getPoint());
+        pointService.usePoint(1L, 5L);
+
         List<PointHistory> pointHistoryList = pointHistoryService.getPointUsageHistory(1L);
         assertEquals(4, pointHistoryList.size());
+        assertEquals(10L, pointHistoryList.get(0).getAmount());
+        assertEquals(5L, pointHistoryList.get(1).getAmount());
+        assertEquals(10L, pointHistoryList.get(2).getAmount());
+        assertEquals(5L, pointHistoryList.get(3).getAmount());
     }
 
 }

@@ -16,13 +16,11 @@ public class PointHistoryService {
         this.pointHistoryTable = pointHistoryTable;
     }
 
-    public Long addHistory(TransactionType type, UserPoint userPoint) {
-        PointHistory pointHistory = pointHistoryTable.insert(userPoint.getId(), userPoint.getPoint(), type, userPoint.getUpdateMillis());
-        return pointHistory.getId();
-
-    }
-
     public List<PointHistory> getPointUsageHistory(long id) {
         return pointHistoryTable.selectAllByUserId(id);
+    }
+
+    public void addHistory(TransactionType type, Long id, Long point) {
+        PointHistory pointHistory = pointHistoryTable.insert(id, point, type, System.currentTimeMillis());
     }
 }

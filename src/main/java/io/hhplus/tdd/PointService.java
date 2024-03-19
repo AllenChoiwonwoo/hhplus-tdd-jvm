@@ -3,6 +3,7 @@ package io.hhplus.tdd;
 import io.hhplus.tdd.database.UserPointTable;
 import io.hhplus.tdd.point.TransactionType;
 import io.hhplus.tdd.point.UserPoint;
+import kotlin.jvm.Synchronized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,26 +31,27 @@ public class PointService {
         return userPointTable.selectById(id);
     }
     public UserPoint chargePoint(long id, long point){
-        return changePoint(id, point);
+        return changePoint(id, point, TransactionType.CHARGE);
 
     }
 
-    public UserPoint usePoint(long id, Long point) {
-        return changePoint(id, point * -1L);
+    public UserPoint usePoint(long id, long point) {
+        return changePoint(id, point ,TransactionType.USE);
     }
 
-    private synchronized UserPoint changePoint(Long id, Long point){
+
+    private synchronized UserPoint changePoint(Long id, Long point, TransactionType type){
         UserPoint userPoint = lookUpOneUserPointById(id);
         if (point == 0L){
-            return userPoint;
+            return userPoint; // todo : 충전/사용 할때 point가 0 이면 어떻게 해야하는지? 예외? 얼리 리턴?
         }
-        long calculatedPoint = userPoint.getPoint() + point;
+        long sign = type.equals(TransactionType.USE) ? -1L : 1L;
+        long calculatedPoint = userPoint.getPoint() + point * sign;
         if (calculatedPoint < 0){
             throw new NotEnoughtPointException();
         }
         UserPoint userPointChanged = userPointTable.insertOrUpdate(id, calculatedPoint);
-        TransactionType type = point > 0L ? TransactionType.CHARGE : TransactionType.USE;
-        pointHistoryService.addHistory(type, userPointChanged);
+        pointHistoryService.addHistory(type, id, point);
         return userPointChanged;
     }
 }

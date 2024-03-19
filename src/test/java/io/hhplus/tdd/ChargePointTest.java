@@ -23,7 +23,10 @@ public class ChargePointTest {
         pointService = new PointService(userPointTable, pointHistoryService);
     }
 
-
+/*
+같은 유저의 포인트를 충전/사용할땐 순자적으로 처리되어야하는가?
+포인트를 충전/사용 할때 순차적으로 처리되어야하는가?
+ */
     @Test
     @DisplayName("포인트를 충전한다.")
     void chargePoint(){
@@ -32,7 +35,7 @@ public class ChargePointTest {
         assertEquals(10, userPoint.getPoint());
     }
     @Test
-    @DisplayName("충전할 포일트가 0이면 충전하지 않는다.")
+    @DisplayName("충전할 포일트가 0이면 충전하지 않는다.") // todo : 이건 요구사항 확인 필요
     void chargePointZero(){
         pointService.setUserPointTable(mockUserPointTable);
 
@@ -41,6 +44,5 @@ public class ChargePointTest {
         BDDMockito.then(mockUserPointTable)
                 .should(Mockito.never())
                 .insertOrUpdate(Mockito.anyLong(), Mockito.anyLong());
-
     }
 }

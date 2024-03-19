@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class UserPointTest {
+public class UsePointTest {
 
     private PointService pointService;
     private UserPointTable userPointTable;
