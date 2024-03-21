@@ -1,5 +1,6 @@
 package io.hhplus.tdd.point
 
+import io.hhplus.tdd.PointHistoryService
 import io.hhplus.tdd.PointService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -9,8 +10,15 @@ import java.awt.Point
 
 @RestController
 @RequestMapping("/point")
-class PointController {
+class PointController @Autowired constructor(
+    private val pointService: PointService,
+    private val pointHistoryService: PointHistoryService
+){
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
+
+//    private val pointService: PointService =
+
+
 
     /**
      * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
@@ -19,7 +27,7 @@ class PointController {
     fun point(
         @PathVariable id: Long,
     ): UserPoint {
-        return UserPoint(0, 0, 0)
+        return pointService.lookUpOneUserPointById(id)
     }
 
     /**
@@ -29,7 +37,7 @@ class PointController {
     fun history(
         @PathVariable id: Long,
     ): List<PointHistory> {
-        return emptyList()
+        return pointHistoryService.getPointUsageHistory(id)
     }
 
     /**
@@ -40,7 +48,7 @@ class PointController {
         @PathVariable id: Long,
         @RequestBody amount: Long,
     ): UserPoint {
-        return UserPoint(0, 0, 0)
+        return pointService.chargePoint(id, amount)
     }
 
     /**
@@ -51,6 +59,6 @@ class PointController {
         @PathVariable id: Long,
         @RequestBody amount: Long,
     ): UserPoint {
-        return UserPoint(0, 0, 0)
+        return pointService.usePoint(id, amount)
     }
 }
